@@ -4,11 +4,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # Page Configuration
-
 st.set_page_config(page_title="University Student Dashboard", layout="wide")
 
 # Header and Team Info
-
 st.title("University Student Dashboard")
 st.markdown("""
 This interactive dashboard displays key metrics such as retention rate, satisfaction, 
@@ -17,41 +15,37 @@ and enrollments across different years, semesters, and departments.
 
 st.markdown("""
 **Developed by:**  
-**Elis García Morales** and **Neris Pacheco Orozco**
+**Elis García Morales** and **Neris Pacheco Orozco**  
 Students of Systems Engineering in the *Data Mining* subject — Universidad de la Costa
 """)
 
 # Data Loading and Preparation
-
 df = pd.read_csv("university_student_data.csv")
 df["Term"] = df["Term"].replace({"Spring": "Semester 1", "Fall": "Semester 2"})
 
-# Interactive Filters
-
+# Interactive Filters (all selected by default)
 years = st.multiselect(
     "Select Year(s):",
     options=sorted(df["Year"].unique()),
-    default=sorted(df["Year"].unique())
+    default=sorted(df["Year"].unique())  # all selected initially
 )
 
 terms = st.multiselect(
     "Select Semester(s):",
     options=df["Term"].unique(),
-    default=df["Term"].unique()
+    default=df["Term"].unique()  # all selected initially
 )
 
 departments = st.multiselect(
     "Select Department(s):",
     options=["Engineering Enrolled", "Business Enrolled", "Arts Enrolled", "Science Enrolled"],
-    default=["Engineering Enrolled", "Business Enrolled", "Arts Enrolled", "Science Enrolled"]
+    default=["Engineering Enrolled", "Business Enrolled", "Arts Enrolled", "Science Enrolled"]  # all selected initially
 )
 
 # Data Filtering
-
 filtered_df = df[(df["Year"].isin(years)) & (df["Term"].isin(terms))]
 
 # KPI Metrics
-
 avg_retention = filtered_df["Retention Rate (%)"].mean()
 avg_satisfaction = filtered_df["Student Satisfaction (%)"].mean()
 total_enrolled = filtered_df["Enrolled"].sum()
@@ -62,9 +56,7 @@ col2.metric("Average Student Satisfaction (%)", f"{avg_satisfaction:.2f}")
 col3.metric("Total Enrollments", f"{int(total_enrolled)}")
 
 # Visualization 1 - Retention Trend
-
 st.subheader("Retention Rate Trend Over Time")
-
 retention_by_year = filtered_df.groupby("Year")["Retention Rate (%)"].mean().reset_index()
 
 fig1, ax1 = plt.subplots()
@@ -80,11 +72,8 @@ ax1.set_title("Retention Rate Trend Over Time")
 ax1.set_ylabel("Retention Rate (%)")
 st.pyplot(fig1)
 
-
 # Visualization 2 - Satisfaction by Year
-
 st.subheader("Average Student Satisfaction per Year")
-
 satisfaction_by_year = filtered_df.groupby("Year")["Student Satisfaction (%)"].mean().reset_index()
 
 fig2, ax2 = plt.subplots()
@@ -101,11 +90,8 @@ ax2.set_title("Average Student Satisfaction per Year")
 ax2.set_ylabel("Satisfaction (%)")
 st.pyplot(fig2)
 
-
 # Visualization 3 - Enrollment by Department
-
 st.subheader("Enrollment Distribution by Department")
-
 dept_totals = filtered_df[departments].sum().reset_index()
 dept_totals.columns = ["Department", "Enrolled Students"]
 
