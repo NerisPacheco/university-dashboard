@@ -17,7 +17,7 @@ and enrollments across different years, semesters, and departments.
 
 st.markdown("""
 **Developed by:**  
-**Ana Pérez Gómez**, **Carlos Rodríguez López**, **María Torres Díaz**  
+**Elis García Morales**, **Neris Pacheco Orozco**
 Department of Computer and Electronic Sciences — Universidad de la Costa
 """)
 
