@@ -21,13 +21,6 @@ st.markdown("""
 Department of Computer and Electronic Sciences — Universidad de la Costa
 """)
 
-st.sidebar.title("Project Team")
-st.sidebar.info("""
-Ana Pérez Gómez  
-Carlos Rodríguez López  
-María Torres Díaz
-""")
-
 # Data Loading and Preparation
 
 df = pd.read_csv("university_student_data.csv")
