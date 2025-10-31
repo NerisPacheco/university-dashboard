@@ -3,7 +3,6 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-
 # Load the dataset
 
 df = pd.read_csv("university_student_data.csv")
@@ -11,29 +10,35 @@ df = pd.read_csv("university_student_data.csv")
 st.set_page_config(page_title="University Student Dashboard", layout="wide")
 
 st.title("University Student Dashboard")
-st.markdown("Interactive dashboard displaying key student metrics such as retention, satisfaction, and enrollments.")
+st.markdown("This interactive dashboard displays key metrics such as retention rate, satisfaction, and enrollments across different years, terms, and departments.")
 
-# Interactive Filters
+# Interactive Filters (start empty)
 
 years = st.multiselect(
     "Select Year(s):",
     options=sorted(df["Year"].unique()),
-    default=sorted(df["Year"].unique())
+    default=[]  # start empty
 )
 
 terms = st.multiselect(
     "Select Term(s):",
     options=df["Term"].unique(),
-    default=df["Term"].unique()
+    default=[]  # start empty
 )
 
 departments = st.multiselect(
     "Select Department(s):",
     options=["Engineering Enrolled", "Business Enrolled", "Arts Enrolled", "Science Enrolled"],
-    default=["Engineering Enrolled", "Business Enrolled", "Arts Enrolled", "Science Enrolled"]
+    default=[]  # start empty
 )
 
-# Filter dataset based on year and term (department filter applies later)
+# Stop execution if filters are empty
+if not years or not terms or not departments:
+    st.warning("Please select at least one Year, one Term, and one Department to display the dashboard.")
+    st.stop()
+
+# Filter dataset based on user selection
+
 filtered_df = df[(df["Year"].isin(years)) & (df["Term"].isin(terms))]
 
 # KPI Cards
@@ -47,7 +52,7 @@ col1.metric("Average Retention Rate (%)", f"{avg_retention:.2f}")
 col2.metric("Average Student Satisfaction (%)", f"{avg_satisfaction:.2f}")
 col3.metric("Total Enrollments", f"{int(total_enrolled)}")
 
-# Chart 1 - Line Plot: Retention Trend Over Time
+# Line Chart: Retention Rate Trend Over Time
 
 st.subheader("Retention Rate Trend Over Time")
 
@@ -66,7 +71,7 @@ ax1.set_title("Retention Rate Trend Over Time")
 ax1.set_ylabel("Retention Rate (%)")
 st.pyplot(fig1)
 
-# Chart 2 - Bar Chart: Average Satisfaction per Year
+# Bar Chart: Average Satisfaction per Year
 
 st.subheader("Average Student Satisfaction per Year")
 
@@ -86,11 +91,10 @@ ax2.set_title("Average Student Satisfaction per Year")
 ax2.set_ylabel("Satisfaction (%)")
 st.pyplot(fig2)
 
-# Chart 3 - Pie Chart: Enrollment Distribution by Department
+# Pie Chart: Enrollment Distribution by Department
 
-st.subheader(" Enrollment Distribution by Department")
+st.subheader("Enrollment Distribution by Department")
 
-# Apply department filter dynamically
 dept_totals = filtered_df[departments].sum().reset_index()
 dept_totals.columns = ["Department", "Enrolled Students"]
 
