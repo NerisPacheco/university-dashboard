@@ -17,8 +17,8 @@ and enrollments across different years, semesters, and departments.
 
 st.markdown("""
 **Developed by:**  
-**Elis García Morales**, **Neris Pacheco Orozco**
-Students of Systems Engineering in the Data Mining subject — Universidad de la Costa
+**Elis García Morales** and **Neris Pacheco Orozco**
+Students of Systems Engineering in the *Data Mining* subject — Universidad de la Costa
 """)
 
 # Data Loading and Preparation
