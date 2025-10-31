@@ -17,27 +17,33 @@ This interactive dashboard displays key metrics such as retention rate, satisfac
 and enrollments across different years, semesters, and departments.
 """)
 
-# Filters
-years = st.multiselect(
-    "Select Year(s):",
-    options=sorted(df["Year"].unique()),
-    default=sorted(df["Year"].unique())
+# Team info
+st.markdown("""
+**Developed by:** Elis Garcia Morales and Neris Pacheco Orozco  
+Students of Systems Engineering in the *Data Mining* subject — Universidad de la Costa
+""")
+
+# Filters with “omit” logic
+years_to_omit = st.multiselect(
+    "Choose Year(s) to omit:",
+    options=sorted(df["Year"].unique())
+)
+terms_to_omit = st.multiselect(
+    "Choose Semester(s) to omit:",
+    options=df["Term"].unique()
+)
+departments_to_omit = st.multiselect(
+    "Choose Department(s) to omit:",
+    options=["Engineering Enrolled", "Business Enrolled", "Arts Enrolled", "Science Enrolled"]
 )
 
-terms = st.multiselect(
-    "Select Semester(s):",
-    options=df["Term"].unique(),
-    default=df["Term"].unique()
-)
+# Filtered dataframe: remove the selected items
+filtered_df = df[
+    (~df["Year"].isin(years_to_omit)) &
+    (~df["Term"].isin(terms_to_omit))
+]
 
-departments = st.multiselect(
-    "Select Department(s):",
-    options=["Engineering Enrolled", "Business Enrolled", "Arts Enrolled", "Science Enrolled"],
-    default=["Engineering Enrolled", "Business Enrolled", "Arts Enrolled", "Science Enrolled"]
-)
-
-# Filtered dataframe
-filtered_df = df[(df["Year"].isin(years)) & (df["Term"].isin(terms))]
+selected_departments = [d for d in ["Engineering Enrolled", "Business Enrolled", "Arts Enrolled", "Science Enrolled"] if d not in departments_to_omit]
 
 # KPI Metrics
 avg_retention = filtered_df["Retention Rate (%)"].mean()
@@ -86,7 +92,7 @@ st.pyplot(fig2)
 
 # Visualization 3 - Enrollment by Department
 st.subheader("Enrollment Distribution by Department")
-dept_totals = filtered_df[departments].sum().reset_index()
+dept_totals = filtered_df[selected_departments].sum().reset_index()
 dept_totals.columns = ["Department", "Enrolled Students"]
 
 fig3, ax3 = plt.subplots()
@@ -98,5 +104,3 @@ ax3.pie(
 )
 ax3.set_title("Enrollment Share by Department")
 st.pyplot(fig3)
-
-
