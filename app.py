@@ -7,10 +7,13 @@ import matplotlib.pyplot as plt
 
 df = pd.read_csv("university_student_data.csv")
 
+# Replace U.S. terms with Colombian-style semesters
+df["Term"] = df["Term"].replace({"Spring": "Semester 1", "Fall": "Semester 2"})
+
 st.set_page_config(page_title="University Student Dashboard", layout="wide")
 
 st.title("University Student Dashboard")
-st.markdown("This interactive dashboard displays key metrics such as retention rate, satisfaction, and enrollments across different years, terms, and departments.")
+st.markdown("This interactive dashboard displays key metrics such as retention rate, satisfaction, and enrollments across different years, semesters, and departments.")
 
 # Interactive Filters (start empty)
 
@@ -21,7 +24,7 @@ years = st.multiselect(
 )
 
 terms = st.multiselect(
-    "Select Term(s):",
+    "Select Semester(s):",
     options=df["Term"].unique(),
     default=[]  # start empty
 )
@@ -34,7 +37,7 @@ departments = st.multiselect(
 
 # Stop execution if filters are empty
 if not years or not terms or not departments:
-    st.warning("Please select at least one Year, one Term, and one Department to display the dashboard.")
+    st.warning("Please select at least one Year, one Semester, and one Department to display the dashboard.")
     st.stop()
 
 # Filter dataset based on user selection
@@ -107,4 +110,5 @@ ax3.pie(
 )
 ax3.set_title("Enrollment Share by Department")
 st.pyplot(fig3)
+
 
