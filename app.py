@@ -3,50 +3,42 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-# ----------------------------------------------------------
-# 1️ Cargar el archivo CSV con los datos
-# ----------------------------------------------------------
+# 1️ Load the dataset
 df = pd.read_csv("university_student_data.csv")
 
-st.set_page_config(page_title="University Dashboard", layout="wide")
+st.set_page_config(page_title="University Student Dashboard", layout="wide")
 
-st.title("🎓 University Student Dashboard")
-st.markdown("Panel interactivo con datos de retención, satisfacción y matrículas.")
+st.title(" University Student Dashboard")
+st.markdown("Interactive dashboard displaying key student metrics such as retention, satisfaction, and enrollments.")
 
-# ----------------------------------------------------------
-# 2️ Filtros interactivos
-# ----------------------------------------------------------
+# 2️ Interactive Filters
 years = st.multiselect(
-    "Selecciona Año(s):",
+    "Select Year(s):",
     options=sorted(df["Year"].unique()),
     default=sorted(df["Year"].unique())
 )
 
 terms = st.multiselect(
-    "Selecciona Semestre(s):",
+    "Select Term(s):",
     options=df["Term"].unique(),
     default=df["Term"].unique()
 )
 
-# Filtrar datos según los filtros seleccionados
+# Filter dataset based on selections
 filtered_df = df[(df["Year"].isin(years)) & (df["Term"].isin(terms))]
 
-# ----------------------------------------------------------
-# 3️ Indicadores principales (KPI)
-# ----------------------------------------------------------
+# 3️ KPI Cards
 avg_retention = filtered_df["Retention Rate (%)"].mean()
 avg_satisfaction = filtered_df["Student Satisfaction (%)"].mean()
 total_enrolled = filtered_df["Enrolled"].sum()
 
 col1, col2, col3 = st.columns(3)
-col1.metric("📊 Promedio Retención (%)", f"{avg_retention:.2f}")
-col2.metric("😊 Promedio Satisfacción (%)", f"{avg_satisfaction:.2f}")
-col3.metric("🎓 Total Matrículas", f"{int(total_enrolled)}")
+col1.metric(" Average Retention Rate (%)", f"{avg_retention:.2f}")
+col2.metric(" Average Student Satisfaction (%)", f"{avg_satisfaction:.2f}")
+col3.metric(" Total Enrollments", f"{int(total_enrolled)}")
 
-# ----------------------------------------------------------
-# 4️ Gráfico 1 - Línea: Tendencia de Retención por Año
-# ----------------------------------------------------------
-st.subheader("📈 Tendencia de la Tasa de Retención por Año")
+# 4️ Chart 1 - Line Plot: Retention Trend Over Time
+st.subheader(" Retention Rate Trend Over Time")
 
 retention_by_year = filtered_df.groupby("Year")["Retention Rate (%)"].mean().reset_index()
 
@@ -59,13 +51,12 @@ sns.lineplot(
     color="steelblue",
     ax=ax1
 )
-ax1.set_title("Tendencia de Retención a lo largo del tiempo")
+ax1.set_title("Retention Rate Trend Over Time")
+ax1.set_ylabel("Retention Rate (%)")
 st.pyplot(fig1)
 
-# ----------------------------------------------------------
-# 5️ Gráfico 2 - Barras: Satisfacción por Año
-# ----------------------------------------------------------
-st.subheader("🏫 Puntuaciones de Satisfacción Estudiantil por Año")
+# 5️ Chart 2 - Bar Chart: Average Satisfaction per Year
+st.subheader(" Average Student Satisfaction per Year")
 
 satisfaction_by_year = filtered_df.groupby("Year")["Student Satisfaction (%)"].mean().reset_index()
 
@@ -79,29 +70,24 @@ sns.barplot(
     legend=False,
     ax=ax2
 )
-ax2.set_title("Satisfacción Promedio por Año")
+ax2.set_title("Average Student Satisfaction per Year")
+ax2.set_ylabel("Satisfaction (%)")
 st.pyplot(fig2)
 
-# ----------------------------------------------------------
-# 6️Gráfico 3 - Circular: Distribución de Matrículas por Departamento
-# ----------------------------------------------------------
-st.subheader(" Distribución de Matrículas por Departamento")
+# 6️ Chart 3 - Pie Chart: Enrollment Distribution by Department
+st.subheader("Enrollment Distribution by Department")
 
 dept_cols = ["Engineering Enrolled", "Business Enrolled", "Arts Enrolled", "Science Enrolled"]
 dept_totals = filtered_df[dept_cols].sum().reset_index()
-dept_totals.columns = ["Departamento", "Estudiantes Matriculados"]
+dept_totals.columns = ["Department", "Enrolled Students"]
 
 fig3, ax3 = plt.subplots()
 ax3.pie(
-    dept_totals["Estudiantes Matriculados"],
-    labels=dept_totals["Departamento"],
+    dept_totals["Enrolled Students"],
+    labels=dept_totals["Department"],
     autopct="%1.1f%%",
     startangle=90
 )
-ax3.set_title("Porcentaje de Matrículas por Departamento")
+ax3.set_title("Enrollment Share by Department")
 st.pyplot(fig3)
 
-# ----------------------------------------------------------
-# Fin del dashboard
-# ----------------------------------------------------------
-st.success("Dashboard generado correctamente.")
