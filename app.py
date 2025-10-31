@@ -3,14 +3,37 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-df = pd.read_csv("university_student_data.csv")
-
-df["Term"] = df["Term"].replace({"Spring": "Semester 1", "Fall": "Semester 2"})
+# Page Configuration
 
 st.set_page_config(page_title="University Student Dashboard", layout="wide")
 
+# Header and Team Info
+
 st.title("University Student Dashboard")
-st.markdown("This interactive dashboard displays key metrics such as retention rate, satisfaction, and enrollments across different years, semesters, and departments.")
+st.markdown("""
+This interactive dashboard displays key metrics such as retention rate, satisfaction, 
+and enrollments across different years, semesters, and departments.
+""")
+
+st.markdown("""
+**Developed by:**  
+**Ana Pérez Gómez**, **Carlos Rodríguez López**, **María Torres Díaz**  
+Department of Computer and Electronic Sciences — Universidad de la Costa
+""")
+
+st.sidebar.title("Project Team")
+st.sidebar.info("""
+Ana Pérez Gómez  
+Carlos Rodríguez López  
+María Torres Díaz
+""")
+
+# Data Loading and Preparation
+
+df = pd.read_csv("university_student_data.csv")
+df["Term"] = df["Term"].replace({"Spring": "Semester 1", "Fall": "Semester 2"})
+
+# Interactive Filters
 
 years = st.multiselect(
     "Select Year(s):",
@@ -30,7 +53,11 @@ departments = st.multiselect(
     default=["Engineering Enrolled", "Business Enrolled", "Arts Enrolled", "Science Enrolled"]
 )
 
+# Data Filtering
+
 filtered_df = df[(df["Year"].isin(years)) & (df["Term"].isin(terms))]
+
+# KPI Metrics
 
 avg_retention = filtered_df["Retention Rate (%)"].mean()
 avg_satisfaction = filtered_df["Student Satisfaction (%)"].mean()
@@ -40,6 +67,8 @@ col1, col2, col3 = st.columns(3)
 col1.metric("Average Retention Rate (%)", f"{avg_retention:.2f}")
 col2.metric("Average Student Satisfaction (%)", f"{avg_satisfaction:.2f}")
 col3.metric("Total Enrollments", f"{int(total_enrolled)}")
+
+# Visualization 1 - Retention Trend
 
 st.subheader("Retention Rate Trend Over Time")
 
@@ -57,6 +86,9 @@ sns.lineplot(
 ax1.set_title("Retention Rate Trend Over Time")
 ax1.set_ylabel("Retention Rate (%)")
 st.pyplot(fig1)
+
+
+# Visualization 2 - Satisfaction by Year
 
 st.subheader("Average Student Satisfaction per Year")
 
@@ -76,6 +108,9 @@ ax2.set_title("Average Student Satisfaction per Year")
 ax2.set_ylabel("Satisfaction (%)")
 st.pyplot(fig2)
 
+
+# Visualization 3 - Enrollment by Department
+
 st.subheader("Enrollment Distribution by Department")
 
 dept_totals = filtered_df[departments].sum().reset_index()
@@ -91,6 +126,5 @@ ax3.pie(
 ax3.set_title("Enrollment Share by Department")
 st.pyplot(fig3)
 
-
-
-
+# Footer
+st.caption("© 2025 Universidad de la Costa — Data Mining Project | Developed for academic purposes only.")
